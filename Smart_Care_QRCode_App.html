@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Smart Care — Equipamento</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f19;--bg-card:#1a2332;--bg-card-alt:#1e293b;--bg-hover:#243044;--accent-blue:#3b82f6;--accent-cyan:#06b6d4;--accent-green:#10b981;--accent-red:#ef4444;--accent-amber:#f59e0b;--accent-purple:#8b5cf6;--text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;--text-dim:#475569;--border:#1e293b;--radius:16px;--radius-sm:12px;--radius-xs:8px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;max-width:480px;margin:0 auto;padding-bottom:100px}
+
+/* STATUS BAR */
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px 8px;font-size:12px;color:var(--text-muted)}
+
+/* APP HEADER */
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;border-bottom:1px solid var(--border)}
+.app-header-left{display:flex;align-items:center;gap:10px}
+.app-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent-blue),var(--accent-cyan));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.app-logo-text{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--accent-cyan);letter-spacing:1.5px;text-transform:uppercase}
+.app-header-link{font-size:12px;color:var(--accent-blue);text-decoration:none;font-weight:600;padding:6px 12px;border:1px solid rgba(59,130,246,.3);border-radius:100px}
+.app-header-link:hover{background:rgba(59,130,246,.1)}
+
+/* EQUIPMENT HERO */
+.equip-hero{padding:20px;position:relative}
+.equip-hero::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(circle,rgba(6,182,212,.06) 0%,transparent 70%);pointer-events:none}
+.equip-category{font-size:11px;color:var(--accent-cyan);font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;font-family:'Space Mono',monospace}
+.equip-name{font-size:22px;font-weight:800;line-height:1.2;margin-bottom:12px}
+.equip-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.equip-info-item{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xs);padding:10px 12px}
+.equip-info-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.equip-info-value{font-size:13px;font-weight:600}
+.equip-info-value.mono{font-family:'Space Mono',monospace;font-size:11px}
+
+/* WARRANTY BADGE */
+.warranty-banner{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius-sm);margin-bottom:4px}
+.warranty-banner.active{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2)}
+.warranty-banner.expiring{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)}
+.warranty-banner.expired{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)}
+.warranty-icon{font-size:24px}
+.warranty-text{flex:1}
+.warranty-status{font-size:13px;font-weight:700}
+.warranty-status.green{color:var(--accent-green)}.warranty-status.amber{color:var(--accent-amber)}.warranty-status.red{color:var(--accent-red)}
+.warranty-detail{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+/* ACTION BUTTONS */
+.actions-section{padding:0 20px}
+.section-label{font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:2px;margin:20px 0 12px;font-family:'Space Mono',monospace}
+
+.action-btn{display:flex;align-items:center;gap:16px;width:100%;padding:18px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text-primary);position:relative;overflow:hidden}
+.action-btn:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.action-btn:active{transform:translateY(0)}
+.action-btn::before{content:'';position:absolute;left:0;top:0;width:4px;height:100%}
+.action-btn.blue::before{background:var(--accent-blue)}
+.action-btn.red::before{background:var(--accent-red)}
+.action-btn.amber::before{background:var(--accent-amber)}
+.action-btn.green::before{background:var(--accent-green)}
+.action-btn.purple::before{background:var(--accent-purple)}
+
+.action-icon{width:48px;height:48px;border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.action-icon.blue{background:rgba(59,130,246,.15)}.action-icon.red{background:rgba(239,68,68,.15)}.action-icon.amber{background:rgba(245,158,11,.15)}.action-icon.green{background:rgba(16,185,129,.15)}.action-icon.purple{background:rgba(139,92,246,.15)}
+
+.action-text{flex:1}
+.action-title{font-size:15px;font-weight:700;margin-bottom:2px}
+.action-desc{font-size:12px;color:var(--text-muted);line-height:1.4}
+
+.action-arrow{font-size:18px;color:var(--text-dim);flex-shrink:0}
+
+/* TRAINING VIDEOS */
+.videos-section{padding:0 20px}
+.video-list{display:flex;flex-direction:column;gap:8px}
+.video-card{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s}
+.video-card:hover{border-color:var(--accent-blue);background:var(--bg-hover)}
+.video-thumb{width:44px;height:44px;border-radius:8px;background:rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative}
+.video-duration{position:absolute;bottom:-2px;right:-2px;background:var(--bg);padding:1px 5px;border-radius:4px;font-size:9px;font-family:'Space Mono',monospace;color:var(--text-muted);border:1px solid var(--border)}
+.video-info{flex:1}
+.video-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.video-meta{font-size:11px;color:var(--text-muted)}
+
+/* CHECKLIST PREVIEW */
+.checklist-section{padding:0 20px}
+.checklist-form{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.checklist-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.checklist-header-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.checklist-header-badge{font-size:10px;padding:3px 8px;border-radius:100px;font-weight:700;font-family:'Space Mono',monospace}
+.checklist-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.checklist-item:last-child{border-bottom:none}
+.checklist-item:hover{background:var(--bg-hover)}
+.checklist-item-text{font-size:13px;flex:1}
+.checklist-toggle{display:flex;gap:6px}
+.toggle-btn{width:36px;height:28px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:all .2s;background:transparent}
+.toggle-btn:hover{border-color:var(--text-muted)}
+.toggle-btn.yes.selected{background:rgba(16,185,129,.2);border-color:var(--accent-green);color:var(--accent-green)}
+.toggle-btn.no.selected{background:rgba(239,68,68,.2);border-color:var(--accent-red);color:var(--accent-red)}
+.checklist-submit{width:100%;padding:14px;background:var(--accent-green);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .2s}
+.checklist-submit:hover{background:var(--accent-green);filter:brightness(1.1)}
+
+/* MAINTENANCE FORM */
+.maint-section{padding:0 20px}
+.maint-form{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.maint-form-header{padding:16px;border-bottom:1px solid var(--border)}
+.maint-form-header h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.maint-form-header p{font-size:12px;color:var(--text-muted)}
+.maint-form-body{padding:16px;display:flex;flex-direction:column;gap:14px}
+.maint-prefilled{background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.15);border-radius:var(--radius-xs);padding:12px 14px}
+.maint-prefilled-label{font-size:10px;color:var(--accent-cyan);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:6px}
+.maint-prefilled-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:var(--text-secondary)}
+.maint-prefilled-row span:last-child{font-weight:600;color:var(--text-primary)}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.form-select,.form-textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-xs);padding:12px 14px;color:var(--text-primary);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;transition:border .2s}
+.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--accent-blue)}
+.form-textarea{min-height:80px;resize:vertical}
+.urgency-options{display:flex;gap:8px}
+.urgency-btn{flex:1;padding:10px 8px;border-radius:var(--radius-xs);border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif}
+.urgency-btn.critical.selected{background:rgba(239,68,68,.15);border-color:var(--accent-red);color:var(--accent-red)}
+.urgency-btn.high.selected{background:rgba(245,158,11,.15);border-color:var(--accent-amber);color:var(--accent-amber)}
+.urgency-btn.normal.selected{background:rgba(16,185,129,.15);border-color:var(--accent-green);color:var(--accent-green)}
+.photo-upload{display:flex;align-items:center;justify-content:center;gap:8px;padding:24px;border:2px dashed var(--border);border-radius:var(--radius-xs);color:var(--text-muted);font-size:13px;cursor:pointer;transition:all .2s}
+.photo-upload:hover{border-color:var(--accent-blue);color:var(--accent-blue)}
+.submit-btn{width:100%;padding:16px;border:none;border-radius:var(--radius-xs);font-size:15px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s}
+.submit-btn.red{background:var(--accent-red);color:#fff}
+.submit-btn.red:hover{filter:brightness(1.1)}
+.submit-btn.green{background:var(--accent-green);color:#fff}
+.submit-btn.green:hover{filter:brightness(1.1)}
+
+/* HISTORY TIMELINE */
+.history-section{padding:0 20px}
+.history-list{display:flex;flex-direction:column;gap:0}
+.history-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.history-item:last-child{border-bottom:none}
+.history-dot-col{display:flex;flex-direction:column;align-items:center}
+.history-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.history-dot.green{background:rgba(16,185,129,.2);border:2px solid var(--accent-green)}
+.history-dot.blue{background:rgba(59,130,246,.2);border:2px solid var(--accent-blue)}
+.history-dot.amber{background:rgba(245,158,11,.2);border:2px solid var(--accent-amber)}
+.history-dot.purple{background:rgba(139,92,246,.2);border:2px solid var(--accent-purple)}
+.history-line{width:2px;flex:1;background:var(--border);margin:4px 0}
+.history-content{flex:1;padding-bottom:4px}
+.history-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.history-desc{font-size:11px;color:var(--text-muted);line-height:1.5}
+.history-date{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:4px}
+
+/* TABS NAVIGATION */
+.tabs-nav{display:flex;gap:2px;padding:0 20px;margin:16px 0 4px;overflow-x:auto}
+.tab-btn{padding:8px 16px;font-size:12px;font-weight:600;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif}
+.tab-btn.active{background:rgba(6,182,212,.12);border-color:var(--accent-cyan);color:var(--accent-cyan)}
+.tab-btn:hover{border-color:var(--text-muted);color:var(--text-secondary)}
+
+/* TAB CONTENT */
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(15,20,35,.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding:8px 12px 12px;z-index:50}
+.bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:var(--radius-xs);cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text-muted)}
+.bottom-nav-item.active{color:var(--accent-cyan)}
+.bottom-nav-item:hover{color:var(--text-primary)}
+.bottom-nav-icon{font-size:20px}
+.bottom-nav-label{font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+
+/* SCAN ANIMATION */
+.scan-success{padding:20px;text-align:center;animation:fadeIn .5s ease}
+.scan-pulse{width:64px;height:64px;border-radius:50%;background:rgba(16,185,129,.15);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;animation:pulseRing 1s ease}
+@keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}100%{box-shadow:0 0 0 20px rgba(16,185,129,0)}}
+.scan-text{font-size:13px;color:var(--accent-green);font-weight:600}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeIn .4s ease both}
+.d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}.d5{animation-delay:.25s}
+</style>
+</head>
+<body>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+<span>9:41</span>
+<span>📶 🔋 92%</span>
+</div>
+
+<!-- APP HEADER -->
+<div class="app-header">
+<div class="app-header-left">
+<div class="app-logo-icon">⚕️</div>
+<span class="app-logo-text">Smart Care</span>
+</div>
+<a href="https://appercompany.github.io/smartcare/" class="app-header-link" target="_blank">📊 Portal</a>
+</div>
+
+<!-- SCAN SUCCESS -->
+<div class="scan-success animate">
+<div class="scan-pulse">✅</div>
+<div class="scan-text">QR Code lido com sucesso</div>
+</div>
+
+<!-- EQUIPMENT HERO -->
+<div class="equip-hero animate d1">
+<div class="equip-category">Foco Cirúrgico</div>
+<div class="equip-name">Foco Cirúrgico LED<br>02 Cúpulas</div>
+
+<div class="equip-info-grid">
+<div class="equip-info-item">
+<div class="equip-info-label">Nº de Série</div>
+<div class="equip-info-value mono">FC-LED-2025-0142</div>
+</div>
+<div class="equip-info-item">
+<div class="equip-info-label">Localização</div>
+<div class="equip-info-value">CC — Sala 03</div>
+</div>
+<div class="equip-info-item">
+<div class="equip-info-label">Instalação</div>
+<div class="equip-info-value mono">14/02/2025</div>
+</div>
+<div class="equip-info-item">
+<div class="equip-info-label">Próx. Manutenção</div>
+<div class="equip-info-value mono">15/03/2026</div>
+</div>
+</div>
+
+<div class="warranty-banner active">
+<div class="warranty-icon">🛡️</div>
+<div class="warranty-text">
+<div class="warranty-status green">✅ Garantia Ativa</div>
+<div class="warranty-detail">Válida até 14/02/2027 — 365 dias restantes</div>
+</div>
+</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-nav animate d2">
+<button class="tab-btn active" onclick="showTab('acoes')">⚡ Ações</button>
+<button class="tab-btn" onclick="showTab('treinar')">📖 Treinamento</button>
+<button class="tab-btn" onclick="showTab('chamado')">🔴 Chamado</button>
+<button class="tab-btn" onclick="showTab('checklist')">📋 Checklist</button>
+<button class="tab-btn" onclick="showTab('historico')">📊 Histórico</button>
+</div>
+
+<!-- TAB: AÇÕES RÁPIDAS -->
+<div class="tab-content active" id="tab-acoes">
+<div class="actions-section">
+<div class="section-label">Ações Rápidas</div>
+
+<a class="action-btn blue" onclick="showTab('treinar')">
+<div class="action-icon blue">📖</div>
+<div class="action-text">
+<div class="action-title">Como usar este equipamento</div>
+<div class="action-desc">Vídeos curtos de operação e ajuste. Resolva dúvidas em 2 minutos.</div>
+</div>
+<span class="action-arrow">›</span>
+</a>
+
+<a class="action-btn red" onclick="showTab('chamado')">
+<div class="action-icon red">🔴</div>
+<div class="action-text">
+<div class="action-title">Solicitar Manutenção</div>
+<div class="action-desc">Abra um chamado em 1 minuto. Dados do equipamento preenchidos automaticamente.</div>
+</div>
+<span class="action-arrow">›</span>
+</a>
+
+<a class="action-btn amber" onclick="showTab('checklist')">
+<div class="action-icon amber">📋</div>
+<div class="action-text">
+<div class="action-title">Checklist do Turno</div>
+<div class="action-desc">Verificação rápida do equipamento. Registro digital para compliance ANVISA.</div>
+</div>
+<span class="action-arrow">›</span>
+</a>
+
+<a class="action-btn green" onclick="showTab('historico')">
+<div class="action-icon green">📊</div>
+<div class="action-text">
+<div class="action-title">Ver Histórico Completo</div>
+<div class="action-desc">Manutenções, chamados, checklists e peças trocadas.</div>
+</div>
+<span class="action-arrow">›</span>
+</a>
+
+<a class="action-btn purple" href="https://appercompany.github.io/smartcare/" target="_blank">
+<div class="action-icon purple">🏥</div>
+<div class="action-text">
+<div class="action-title">Acessar Portal do Hospital</div>
+<div class="action-desc">Dashboard completo com todos os equipamentos e relatórios.</div>
+</div>
+<span class="action-arrow">›</span>
+</a>
+</div>
+</div>
+
+<!-- TAB: TREINAMENTO -->
+<div class="tab-content" id="tab-treinar">
+<div class="videos-section">
+<div class="section-label">Vídeos de Treinamento</div>
+<div class="video-list">
+<div class="video-card">
+<div class="video-thumb">▶️<span class="video-duration">2:15</span></div>
+<div class="video-info"><div class="video-title">Como ajustar foco e intensidade</div><div class="video-meta">Básico • Mais assistido</div></div>
+</div>
+<div class="video-card">
+<div class="video-thumb">▶️<span class="video-duration">1:48</span></div>
+<div class="video-info"><div class="video-title">Posicionamento do braço articulado</div><div class="video-meta">Básico • Essencial</div></div>
+</div>
+<div class="video-card">
+<div class="video-thumb">▶️<span class="video-duration">2:32</span></div>
+<div class="video-info"><div class="video-title">Trocar modo cirúrgico / exame</div><div class="video-meta">Intermediário</div></div>
+</div>
+<div class="video-card">
+<div class="video-thumb">▶️<span class="video-duration">1:20</span></div>
+<div class="video-info"><div class="video-title">Limpeza e desinfecção correta</div><div class="video-meta">Básico • Obrigatório</div></div>
+</div>
+<div class="video-card">
+<div class="video-thumb">▶️<span class="video-duration">3:05</span></div>
+<div class="video-info"><div class="video-title">Resolução de problemas comuns</div><div class="video-meta">Avançado • Troubleshooting</div></div>
+</div>
+</div>
+
+<div class="section-label" style="margin-top:24px">Documentos</div>
+<div class="video-list">
+<div class="video-card">
+<div class="video-thumb" style="background:rgba(245,158,11,.15)">📄</div>
+<div class="video-info"><div class="video-title">Guia Rápido de Operação (PDF)</div><div class="video-meta">1 página • Ilustrado</div></div>
+</div>
+<div class="video-card">
+<div class="video-thumb" style="background:rgba(139,92,246,.15)">📘</div>
+<div class="video-info"><div class="video-title">Manual Completo do Equipamento</div><div class="video-meta">42 páginas • PDF</div></div>
+</div>
+<div class="video-card">
+<div class="video-thumb" style="background:rgba(239,68,68,.15)">⚠️</div>
+<div class="video-info"><div class="video-title">O que NÃO fazer com este equipamento</div><div class="video-meta">Lista de cuidados • Importante</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- TAB: CHAMADO -->
+<div class="tab-content" id="tab-chamado">
+<div class="maint-section">
+<div class="section-label">Solicitar Manutenção</div>
+<div class="maint-form">
+<div class="maint-form-header">
+<h3>🔴 Novo Chamado</h3>
+<p>Os dados do equipamento já foram preenchidos automaticamente</p>
+</div>
+<div class="maint-form-body">
+<!-- PREFILLED DATA -->
+<div class="maint-prefilled">
+<div class="maint-prefilled-label">✅ Dados preenchidos automaticamente</div>
+<div class="maint-prefilled-row"><span>Equipamento</span><span>Foco Cirúrgico LED 02 Cúpulas</span></div>
+<div class="maint-prefilled-row"><span>Nº Série</span><span>FC-LED-2025-0142</span></div>
+<div class="maint-prefilled-row"><span>Local</span><span>CC — Sala 03</span></div>
+<div class="maint-prefilled-row"><span>Garantia</span><span style="color:var(--accent-green)">✅ Ativa até 14/02/2027</span></div>
+<div class="maint-prefilled-row"><span>Hospital</span><span>Hospital Regional do Vale</span></div>
+</div>
+
+<!-- TYPE -->
+<div class="form-group">
+<label>Tipo do problema</label>
+<select class="form-select">
+<option>Selecione...</option>
+<option>Parou de funcionar</option>
+<option>Funcionando com defeito</option>
+<option>Barulho anormal</option>
+<option>Peça danificada / quebrada</option>
+<option>Problema elétrico</option>
+<option>Outro</option>
+</select>
+</div>
+
+<!-- URGENCY -->
+<div class="form-group">
+<label>Urgência</label>
+<div class="urgency-options">
+<button class="urgency-btn critical" onclick="selectUrgency(this)">🔴 Crítica<br><span style="font-size:10px;font-weight:400">Parou cirurgia</span></button>
+<button class="urgency-btn high" onclick="selectUrgency(this)">🟡 Alta<br><span style="font-size:10px;font-weight:400">Próx. 24h</span></button>
+<button class="urgency-btn normal selected" onclick="selectUrgency(this)">🟢 Normal<br><span style="font-size:10px;font-weight:400">Programar</span></button>
+</div>
+</div>
+
+<!-- DESCRIPTION -->
+<div class="form-group">
+<label>Descreva o problema</label>
+<textarea class="form-textarea" placeholder="Ex: A cúpula direita não está acendendo quando ligo o foco..."></textarea>
+</div>
+
+<!-- PHOTO -->
+<div class="form-group">
+<label>Foto do problema (opcional)</label>
+<div class="photo-upload">📷 Tirar foto ou escolher do álbum</div>
+</div>
+
+<!-- YOUR INFO -->
+<div class="form-group">
+<label>Seu nome</label>
+<select class="form-select">
+<option>Dr. Ricardo Costa — Eng. Clínico</option>
+<option>Enf. Mariana Silva</option>
+<option>Téc. Paulo Ribeiro</option>
+<option>Outro</option>
+</select>
+</div>
+
+<button class="submit-btn red">🔴 Enviar Chamado</button>
+<p style="font-size:11px;color:var(--text-dim);text-align:center;margin-top:8px">A equipe técnica receberá por e-mail e WhatsApp imediatamente</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- TAB: CHECKLIST -->
+<div class="tab-content" id="tab-checklist">
+<div class="checklist-section">
+<div class="section-label">Checklist do Turno</div>
+<div class="checklist-form">
+<div class="checklist-header">
+<div class="checklist-header-title">📋 Verificação — Foco Cirúrgico</div>
+<div class="checklist-header-badge" style="background:rgba(6,182,212,.15);color:var(--accent-cyan)">6 itens</div>
+</div>
+
+<div class="checklist-item" onclick="toggleCheck(this)">
+<span class="checklist-item-text">Ambas cúpulas acendem corretamente?</span>
+<div class="checklist-toggle"><button class="toggle-btn yes" onclick="event.stopPropagation();selectToggle(this,'yes')">✅</button><button class="toggle-btn no" onclick="event.stopPropagation();selectToggle(this,'no')">❌</button></div>
+</div>
+<div class="checklist-item" onclick="toggleCheck(this)">
+<span class="checklist-item-text">Ajuste de intensidade funciona?</span>
+<div class="checklist-toggle"><button class="toggle-btn yes" onclick="event.stopPropagation();selectToggle(this,'yes')">✅</button><button class="toggle-btn no" onclick="event.stopPropagation();selectToggle(this,'no')">❌</button></div>
+</div>
+<div class="checklist-item" onclick="toggleCheck(this)">
+<span class="checklist-item-text">Braço articulado movimenta livre?</span>
+<div class="checklist-toggle"><button class="toggle-btn yes" onclick="event.stopPropagation();selectToggle(this,'yes')">✅</button><button class="toggle-btn no" onclick="event.stopPropagation();selectToggle(this,'no')">❌</button></div>
+</div>
+<div class="checklist-item" onclick="toggleCheck(this)">
+<span class="checklist-item-text">Braço trava na posição corretamente?</span>
+<div class="checklist-toggle"><button class="toggle-btn yes" onclick="event.stopPropagation();selectToggle(this,'yes')">✅</button><button class="toggle-btn no" onclick="event.stopPropagation();selectToggle(this,'no')">❌</button></div>
+</div>
+<div class="checklist-item" onclick="toggleCheck(this)">
+<span class="checklist-item-text">Cabos sem danos visíveis?</span>
+<div class="checklist-toggle"><button class="toggle-btn yes" onclick="event.stopPropagation();selectToggle(this,'yes')">✅</button><button class="toggle-btn no" onclick="event.stopPropagation();selectToggle(this,'no')">❌</button></div>
+</div>
+<div class="checklist-item" onclick="toggleCheck(this)">
+<span class="checklist-item-text">Limpeza terminal realizada?</span>
+<div class="checklist-toggle"><button class="toggle-btn yes" onclick="event.stopPropagation();selectToggle(this,'yes')">✅</button><button class="toggle-btn no" onclick="event.stopPropagation();selectToggle(this,'no')">❌</button></div>
+</div>
+
+<div style="padding:14px 16px">
+<div class="form-group" style="margin-bottom:12px">
+<label>Turno</label>
+<div style="display:flex;gap:8px">
+<button class="urgency-btn normal selected" onclick="selectUrgency(this)" style="flex:1">☀️ Manhã</button>
+<button class="urgency-btn high" onclick="selectUrgency(this)" style="flex:1">🌤️ Tarde</button>
+<button class="urgency-btn critical" onclick="selectUrgency(this)" style="flex:1">🌙 Noite</button>
+</div>
+</div>
+<div class="form-group" style="margin-bottom:12px">
+<label>Responsável</label>
+<select class="form-select"><option>Enf. Mariana Silva</option><option>Téc. Paulo Ribeiro</option><option>Enf. Carla Mendes</option><option>Outro</option></select>
+</div>
+</div>
+
+<button class="checklist-submit" onclick="submitChecklist()">✅ Registrar Checklist</button>
+</div>
+</div>
+</div>
+
+<!-- TAB: HISTÓRICO -->
+<div class="tab-content" id="tab-historico">
+<div class="history-section">
+<div class="section-label">Histórico do Equipamento</div>
+<div class="history-list">
+<div class="history-item">
+<div class="history-dot-col"><div class="history-dot green">✅</div><div class="history-line"></div></div>
+<div class="history-content"><div class="history-title">Checklist aprovado — Turno Manhã</div><div class="history-desc">6/6 itens conformes. Responsável: Enf. Mariana Silva</div><div class="history-date">14/02/2026 — 06:48</div></div>
+</div>
+<div class="history-item">
+<div class="history-dot-col"><div class="history-dot blue">🔧</div><div class="history-line"></div></div>
+<div class="history-content"><div class="history-title">Manutenção preventiva realizada</div><div class="history-desc">Revisão semestral completa. Verificação de LEDs, braço articulado, limpeza óptica. Tudo OK. Técnico: André Santos</div><div class="history-date">10/02/2026 — 14:30</div></div>
+</div>
+<div class="history-item">
+<div class="history-dot-col"><div class="history-dot green">✅</div><div class="history-line"></div></div>
+<div class="history-content"><div class="history-title">Checklist aprovado — Turno Noite</div><div class="history-desc">6/6 itens conformes. Responsável: Enf. Carla Mendes</div><div class="history-date">09/02/2026 — 19:15</div></div>
+</div>
+<div class="history-item">
+<div class="history-dot-col"><div class="history-dot amber">📝</div><div class="history-line"></div></div>
+<div class="history-content"><div class="history-title">Chamado CH-2026-039 — Resolvido</div><div class="history-desc">Problema: cúpula direita piscando. Solução: reconexão do cabo de alimentação. Tempo resolução: 2.5h</div><div class="history-date">28/01/2026 — 11:20</div></div>
+</div>
+<div class="history-item">
+<div class="history-dot-col"><div class="history-dot purple">⭐</div><div class="history-line"></div></div>
+<div class="history-content"><div class="history-title">NPS — Nota 10</div><div class="history-desc">Pesquisa pós-manutenção. "Excelente atendimento, técnico muito competente."</div><div class="history-date">20/01/2026 — 08:00</div></div>
+</div>
+<div class="history-item">
+<div class="history-dot-col"><div class="history-dot blue">🔧</div><div class="history-line"></div></div>
+<div class="history-content"><div class="history-title">Manutenção preventiva realizada</div><div class="history-desc">Primeira revisão semestral. Substituição filtro óptico preventiva. Técnico: André Santos</div><div class="history-date">14/08/2025 — 10:00</div></div>
+</div>
+<div class="history-item">
+<div class="history-dot-col"><div class="history-dot green">📦</div></div>
+<div class="history-content"><div class="history-title">Equipamento instalado</div><div class="history-desc">Instalação inicial. QR Code aplicado. Treinamento equipe de enfermagem realizado. Técnico: André Santos</div><div class="history-date">14/02/2025 — 09:00</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+<a class="bottom-nav-item active" onclick="showTab('acoes')"><span class="bottom-nav-icon">🏠</span><span class="bottom-nav-label">Início</span></a>
+<a class="bottom-nav-item" onclick="showTab('treinar')"><span class="bottom-nav-icon">📖</span><span class="bottom-nav-label">Treinar</span></a>
+<a class="bottom-nav-item" onclick="showTab('chamado')" style="position:relative"><span class="bottom-nav-icon" style="font-size:28px">🔴</span><span class="bottom-nav-label" style="color:var(--accent-red)">Chamado</span></a>
+<a class="bottom-nav-item" onclick="showTab('checklist')"><span class="bottom-nav-icon">📋</span><span class="bottom-nav-label">Checklist</span></a>
+<a class="bottom-nav-item" onclick="showTab('historico')"><span class="bottom-nav-icon">📊</span><span class="bottom-nav-label">Histórico</span></a>
+</nav>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tabs-nav .tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.bottom-nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  const tabIndex={acoes:0,treinar:1,chamado:2,checklist:3,historico:4};
+  document.querySelectorAll('.tabs-nav .tab-btn')[tabIndex[id]].classList.add('active');
+  document.querySelectorAll('.bottom-nav-item')[tabIndex[id]].classList.add('active');
+  window.scrollTo({top:280,behavior:'smooth'});
+}
+
+function selectUrgency(btn){
+  btn.parentElement.querySelectorAll('.urgency-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function selectToggle(btn,type){
+  const parent=btn.closest('.checklist-toggle');
+  parent.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function submitChecklist(){
+  const items=document.querySelectorAll('.checklist-item');
+  let allFilled=true;
+  items.forEach(item=>{
+    const selected=item.querySelector('.toggle-btn.selected');
+    if(!selected)allFilled=false;
+  });
+  if(!allFilled){alert('Por favor, responda todos os itens do checklist.');return;}
+  const noItems=document.querySelectorAll('.toggle-btn.no.selected');
+  if(noItems.length>0){
+    alert('⚠️ Checklist registrado com '+noItems.length+' item(ns) reprovado(s).\n\nUm alerta foi enviado automaticamente ao Engenheiro Clínico e ao fabricante.');
+  }else{
+    alert('✅ Checklist registrado com sucesso!\n\n6/6 itens conformes.\nRegistro salvo para compliance ANVISA/ONA.');
+  }
+}
+</script>
+</body>
+</html>
